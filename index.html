@@ -637,7 +637,6 @@
         .key:disabled { opacity: 0.4; cursor: not-allowed; }
         .key.wide { flex: 1.6 1 0; font-size: 0.75rem; letter-spacing: 1px; }
         .key.correct { background: linear-gradient(135deg, #00ff41, #00cc33); border-color: #00ff41; color: #000; }
-        .key.present { background: linear-gradient(135deg, #ff3b3b, #cc0000); border-color: #ff3b3b; color: #fff; }
         .key.absent  { background: linear-gradient(135deg, #3a3a3a, #222); border-color: #444; color: #888; }
 
         .guess-analysis { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
@@ -944,18 +943,14 @@
 
         function updateKeyboardState() {
             if (!state.secret_word) { resetKeyboardColors(); return; }
-            const best = {};
-            const rank = { absent: 0, present: 1, correct: 2 };
-            state.guesses.forEach(g => {
-                const s = scoreGuess(g, state.secret_word);
-                g.split('').forEach((ch, i) => {
-                    if (!best[ch] || rank[s[i]] > rank[best[ch]]) best[ch] = s[i];
-                });
-            });
+            const secretLetters = new Set(state.secret_word.split(''));
+            const usedLetters = new Set();
+            state.guesses.forEach(g => g.split('').forEach(ch => usedLetters.add(ch)));
             document.querySelectorAll('.key').forEach(btn => {
                 const k = btn.dataset.key;
                 btn.classList.remove('correct', 'present', 'absent');
-                if (best[k]) btn.classList.add(best[k]);
+                if (!usedLetters.has(k)) return;
+                btn.classList.add(secretLetters.has(k) ? 'correct' : 'absent');
             });
         }
 
