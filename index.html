@@ -598,6 +598,48 @@
         .guess-tile.present { background: linear-gradient(135deg, #ff3b3b, #cc0000); border-color: #ff3b3b; color: #fff; }
         .guess-tile.absent { background: linear-gradient(135deg, #666, #444); border-color: #555; color: #ccc; }
 
+        .keyboard {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 18px;
+            align-items: center;
+            width: 100%;
+            max-width: 520px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .keyboard-row {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+            width: 100%;
+        }
+        .key {
+            flex: 1 1 0;
+            min-width: 0;
+            height: 52px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 0.95rem;
+            background: rgba(0, 255, 255, 0.08);
+            border: 1px solid rgba(0, 255, 255, 0.35);
+            color: #e0ffff;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-transform: uppercase;
+            user-select: none;
+            padding: 0;
+        }
+        .key:hover:not(:disabled) { background: rgba(0, 255, 255, 0.2); transform: translateY(-1px); }
+        .key:active:not(:disabled) { transform: translateY(1px); }
+        .key:disabled { opacity: 0.4; cursor: not-allowed; }
+        .key.wide { flex: 1.6 1 0; font-size: 0.75rem; letter-spacing: 1px; }
+        .key.correct { background: linear-gradient(135deg, #00ff41, #00cc33); border-color: #00ff41; color: #000; }
+        .key.present { background: linear-gradient(135deg, #ff3b3b, #cc0000); border-color: #ff3b3b; color: #fff; }
+        .key.absent  { background: linear-gradient(135deg, #3a3a3a, #222); border-color: #444; color: #888; }
+
         .guess-analysis { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
 
         .analysis-item {
@@ -723,6 +765,21 @@
     .char-slot img { height: 52px; }
     .title-row { gap: 4px; }
 }
+
+/* ── Keyboard responsive ── */
+@media (max-width: 600px) {
+    .key { height: 46px; font-size: 0.85rem; }
+    .key.wide { font-size: 0.65rem; }
+}
+@media (max-width: 480px) {
+    .keyboard { max-width: 100%; }
+    .keyboard-row { gap: 4px; }
+    .key { height: 42px; font-size: 0.8rem; }
+}
+@media (max-width: 360px) {
+    .key { height: 38px; font-size: 0.72rem; }
+    .key.wide { font-size: 0.55rem; }
+}
 </style>
 </head>
 <body>
@@ -762,6 +819,8 @@
             <input type="text" id="hiddenInput" style="position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none;">
             <div class="info-text">Press ENTER to submit • BACKSPACE to delete</div>
         </div>
+
+        <div class="keyboard" id="keyboard"></div>
     </div>
 
     </div>
@@ -835,9 +894,76 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             loadStats();
+            renderKeyboard();
             initializeGame();
             setupEventListeners();
         });
+
+        const KEYBOARD_ROWS = [
+            ['Q','W','E','R','T','Y','U','I','O','P'],
+            ['A','S','D','F','G','H','J','K','L'],
+            ['ENTER','Z','X','C','V','B','N','M','BACKSPACE']
+        ];
+
+        function renderKeyboard() {
+            const kb = document.getElementById('keyboard');
+            if (!kb) return;
+            kb.innerHTML = '';
+            KEYBOARD_ROWS.forEach(row => {
+                const rowEl = document.createElement('div');
+                rowEl.className = 'keyboard-row';
+                row.forEach(k => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'key' + (k.length > 1 ? ' wide' : '');
+                    btn.dataset.key = k;
+                    btn.textContent = k === 'BACKSPACE' ? '⌫' : k;
+                    btn.addEventListener('click', () => handleVirtualKey(k));
+                    rowEl.appendChild(btn);
+                });
+                kb.appendChild(rowEl);
+            });
+        }
+
+        function handleVirtualKey(key) {
+            if (!inputEnabled || state.game_over || !timerStarted) return;
+            if (key === 'ENTER') {
+                if (currentInput.length === WORD_LENGTH) submitGuess();
+                else { shakeAnimation(); showMessage('Word must be 5 letters'); }
+                return;
+            }
+            if (key === 'BACKSPACE') {
+                currentInput = currentInput.slice(0, -1);
+            } else if (/^[A-Z]$/.test(key) && currentInput.length < WORD_LENGTH) {
+                currentInput += key;
+            }
+            const hi = document.getElementById('hiddenInput');
+            if (hi) hi.value = currentInput;
+            updateInputDisplay();
+        }
+
+        function updateKeyboardState() {
+            if (!state.secret_word) { resetKeyboardColors(); return; }
+            const best = {};
+            const rank = { absent: 0, present: 1, correct: 2 };
+            state.guesses.forEach(g => {
+                const s = scoreGuess(g, state.secret_word);
+                g.split('').forEach((ch, i) => {
+                    if (!best[ch] || rank[s[i]] > rank[best[ch]]) best[ch] = s[i];
+                });
+            });
+            document.querySelectorAll('.key').forEach(btn => {
+                const k = btn.dataset.key;
+                btn.classList.remove('correct', 'present', 'absent');
+                if (best[k]) btn.classList.add(best[k]);
+            });
+        }
+
+        function resetKeyboardColors() {
+            document.querySelectorAll('.key').forEach(btn => {
+                btn.classList.remove('correct', 'present', 'absent');
+            });
+        }
 
         function initializeGame() {
             if (hasValidStateFile()) {
@@ -1032,6 +1158,7 @@
                     gameBoard.appendChild(tile);
                 }
             }
+            updateKeyboardState();
         }
 
         function updateInputDisplay() {
