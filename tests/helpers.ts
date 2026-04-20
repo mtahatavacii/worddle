@@ -61,19 +61,49 @@ export async function startGame(page: Page) {
   await expect(page.locator('#message')).toContainText('Game started');
 }
 
-/** Types a 5-letter word via the physical keyboard and presses Enter. */
+/** Types a 5-letter word via the physical keyboard, presses Enter, waits for submit. */
 export async function submitGuessPhysical(page: Page, word: string) {
+  const beforeCount = await readGuessCount(page);
   await page.locator('#hiddenInput').focus();
   await page.keyboard.type(word);
   await page.keyboard.press('Enter');
+  await waitForGuessSettled(page, beforeCount);
 }
 
-/** Types a 5-letter word by clicking the on-screen keyboard and presses ENTER key. */
+/** Types a 5-letter word by clicking the on-screen keyboard, presses ENTER, waits for submit. */
 export async function submitGuessVirtual(page: Page, word: string) {
+  const beforeCount = await readGuessCount(page);
   for (const ch of word.toUpperCase()) {
     await page.locator(`.key[data-key="${ch}"]`).click();
   }
   await page.locator('.key[data-key="ENTER"]').click();
+  await waitForGuessSettled(page, beforeCount);
+}
+
+/** Reads the number of committed guesses from localStorage. */
+async function readGuessCount(page: Page): Promise<number> {
+  return page.evaluate(() => {
+    const s = JSON.parse(localStorage.getItem('wordle_state') || '{}');
+    return (s.guesses || []).length;
+  });
+}
+
+/**
+ * Waits until the guesses array in localStorage grows (successful submit) OR
+ * the message shows a validation error (rejected submit). Either way, the
+ * submitGuess() promise has settled and the board reflects final state.
+ */
+async function waitForGuessSettled(page: Page, priorCount: number) {
+  await page.waitForFunction(
+    (prev) => {
+      const s = JSON.parse(localStorage.getItem('wordle_state') || '{}');
+      if ((s.guesses || []).length > prev) return true;
+      const msg = document.getElementById('message')?.textContent || '';
+      return /not a valid|must be 5|already guessed/i.test(msg);
+    },
+    priorCount,
+    { timeout: 5000 }
+  );
 }
 
 /** Reads the per-tile classes of a given row (0-indexed). */

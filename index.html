@@ -18,11 +18,17 @@
             background: linear-gradient(135deg, #0a0e27 0%, #1a0e3f 50%, #0f1a3f 100%);
             color: #e0e0ff;
             min-height: 100vh;
+            min-height: 100dvh;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: flex-start;
             overflow-x: hidden;
             position: relative;
+            padding: clamp(8px, 2vw, 20px) 0;
+            padding-top: max(clamp(8px, 2vw, 20px), env(safe-area-inset-top));
+            padding-bottom: max(clamp(8px, 2vw, 20px), env(safe-area-inset-bottom));
+            -webkit-tap-highlight-color: transparent;
+            -webkit-text-size-adjust: 100%;
         }
 
         body::before {
@@ -42,12 +48,13 @@
         .container {
             width: 100%;
             max-width: 520px;
-            padding: 20px;
+            padding: clamp(12px, 3vw, 24px);
+            margin: auto;
         }
 
         .header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: clamp(16px, 4vw, 30px);
             animation: slideDown 0.8s ease-out;
         }
 
@@ -58,7 +65,7 @@
 
         .title {
             font-family: 'Orbitron', sans-serif;
-            font-size: 3.5rem;
+            font-size: clamp(1.9rem, 8vw, 3.5rem);
             font-weight: 900;
             margin-bottom: 8px;
             background: linear-gradient(45deg, #00ffff, #ff00ff, #00ffff);
@@ -77,7 +84,7 @@
         }
 
         .subtitle {
-            font-size: 0.85rem;
+            font-size: clamp(0.7rem, 2vw, 0.85rem);
             color: #a0a0ff;
             letter-spacing: 2px;
             opacity: 0.8;
@@ -86,15 +93,16 @@
 
         .controls {
             display: flex;
-            gap: 12px;
+            flex-wrap: wrap;
+            gap: clamp(6px, 1.5vw, 12px);
             justify-content: center;
-            margin-bottom: 20px;
+            margin-bottom: clamp(14px, 3vw, 20px);
         }
 
         button {
             font-family: 'Orbitron', sans-serif;
-            font-size: 0.9rem;
-            padding: 10px 20px;
+            font-size: clamp(0.72rem, 2vw, 0.9rem);
+            padding: clamp(7px, 1.8vw, 10px) clamp(12px, 3vw, 20px);
             border: 2px solid;
             border-radius: 8px;
             cursor: pointer;
@@ -104,6 +112,8 @@
             text-transform: uppercase;
             position: relative;
             overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
 
         .btn-stats {
@@ -136,10 +146,12 @@
             text-align: center;
             min-height: 24px;
             margin-bottom: 16px;
-            font-size: 0.95rem;
+            font-size: clamp(0.8rem, 2.4vw, 0.95rem);
             color: #00ffff;
             animation: pulse 2s ease-in-out infinite;
             letter-spacing: 1px;
+            padding: 0 10px;
+            word-break: break-word;
         }
 
         .message.success { color: #00ff00; }
@@ -152,7 +164,7 @@
 
         .timer {
             text-align: center;
-            font-size: 2rem;
+            font-size: clamp(1.3rem, 5vw, 2rem);
             font-family: 'Orbitron', sans-serif;
             color: #ff00ff;
             margin-bottom: 16px;
@@ -164,9 +176,9 @@
         .game-board {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 8px;
-            margin-bottom: 24px;
-            padding: 20px;
+            gap: clamp(4px, 1.2vw, 8px);
+            margin-bottom: clamp(16px, 3vw, 24px);
+            padding: clamp(10px, 2.4vw, 20px);
             background: rgba(10, 14, 39, 0.4);
             border: 2px solid rgba(0, 255, 255, 0.2);
             border-radius: 12px;
@@ -179,7 +191,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
+            font-size: clamp(1.1rem, 5vw, 2rem);
             font-weight: bold;
             font-family: 'Orbitron', sans-serif;
             border: 2px solid rgba(255, 255, 255, 0.1);
@@ -233,7 +245,7 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 8px;
-            font-size: 0.9rem;
+            font-size: clamp(0.72rem, 2vw, 0.9rem);
             color: #a0a0ff;
             letter-spacing: 1px;
         }
@@ -241,8 +253,8 @@
         .input-boxes {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
-            gap: 6px;
-            padding: 12px;
+            gap: clamp(4px, 1vw, 6px);
+            padding: clamp(8px, 2vw, 12px);
             background: rgba(10, 14, 39, 0.4);
             border: 2px solid rgba(255, 0, 255, 0.2);
             border-radius: 8px;
@@ -253,7 +265,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.8rem;
+            font-size: clamp(1rem, 4.5vw, 1.8rem);
             font-weight: bold;
             font-family: 'Orbitron', sans-serif;
             border: 2px solid rgba(255, 0, 255, 0.3);
@@ -272,7 +284,7 @@
 
         .info-text {
             text-align: center;
-            font-size: 0.8rem;
+            font-size: clamp(0.65rem, 1.8vw, 0.8rem);
             color: #888;
             margin-top: 12px;
             letter-spacing: 1px;
@@ -295,9 +307,10 @@
             background: linear-gradient(135deg, rgba(20, 10, 40, 0.95) 0%, rgba(10, 20, 50, 0.95) 100%);
             border: 2px solid #00ffff;
             border-radius: 16px;
-            padding: 32px;
-            width: 90%;
-            max-width: 400px;
+            padding: clamp(20px, 5vw, 32px);
+            width: min(400px, calc(100vw - 24px));
+            max-height: calc(100dvh - 24px);
+            overflow-y: auto;
             box-shadow: 0 0 40px rgba(0, 255, 255, 0.3);
         }
 
@@ -403,7 +416,7 @@
             background: linear-gradient(135deg, rgba(10, 14, 39, 0.98) 0%, rgba(20, 10, 50, 0.98) 100%);
             border: 2px solid #00ffff;
             border-radius: 20px;
-            padding: 40px 50px;
+            padding: clamp(24px, 5vw, 40px) clamp(18px, 5vw, 50px);
             z-index: 500;
             opacity: 0;
             pointer-events: none;
@@ -411,8 +424,10 @@
             backdrop-filter: blur(10px);
             box-shadow: 0 0 50px rgba(0, 255, 255, 0.3);
             text-align: center;
+            width: min(500px, calc(100vw - 24px));
             max-width: 500px;
-            min-width: 300px;
+            max-height: calc(100dvh - 24px);
+            overflow-y: auto;
         }
 
         .game-result-modal.show {
@@ -553,10 +568,9 @@
             background: linear-gradient(135deg, rgba(10, 14, 39, 0.98) 0%, rgba(20, 10, 50, 0.98) 100%);
             border: 2px solid #00ffff;
             border-radius: 20px;
-            padding: 40px;
-            max-width: 600px;
-            width: 90%;
-            max-height: 80vh;
+            padding: clamp(20px, 5vw, 40px);
+            width: min(600px, calc(100vw - 24px));
+            max-height: calc(100dvh - 24px);
             overflow-y: auto;
             box-shadow: 0 0 50px rgba(0, 255, 255, 0.3);
         }
@@ -601,8 +615,8 @@
         .keyboard {
             display: flex;
             flex-direction: column;
-            gap: 6px;
-            margin-top: 18px;
+            gap: clamp(4px, 1vw, 6px);
+            margin-top: clamp(12px, 3vw, 18px);
             align-items: center;
             width: 100%;
             max-width: 520px;
@@ -611,17 +625,17 @@
         }
         .keyboard-row {
             display: flex;
-            gap: 5px;
+            gap: clamp(3px, 0.9vw, 5px);
             justify-content: center;
             width: 100%;
         }
         .key {
             flex: 1 1 0;
             min-width: 0;
-            height: 52px;
+            height: clamp(40px, 10vw, 54px);
             font-family: 'Orbitron', sans-serif;
             font-weight: 700;
-            font-size: 0.95rem;
+            font-size: clamp(0.7rem, 2.6vw, 0.95rem);
             background: rgba(0, 255, 255, 0.08);
             border: 1px solid rgba(0, 255, 255, 0.35);
             color: #e0ffff;
@@ -631,11 +645,13 @@
             text-transform: uppercase;
             user-select: none;
             padding: 0;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
         .key:hover:not(:disabled) { background: rgba(0, 255, 255, 0.2); transform: translateY(-1px); }
         .key:active:not(:disabled) { transform: translateY(1px); }
         .key:disabled { opacity: 0.4; cursor: not-allowed; }
-        .key.wide { flex: 1.6 1 0; font-size: 0.75rem; letter-spacing: 1px; }
+        .key.wide { flex: 1.6 1 0; font-size: clamp(0.55rem, 1.9vw, 0.75rem); letter-spacing: 1px; }
         .key.correct { background: linear-gradient(135deg, #00ff41, #00cc33); border-color: #00ff41; color: #000; }
         .key.absent  { background: linear-gradient(135deg, #3a3a3a, #222); border-color: #444; color: #888; }
 
@@ -683,14 +699,12 @@
         .hidden { display: none !important; }
 
         @media (max-width: 600px) {
-            .title { font-size: 2.5rem; }
-            .container { padding: 12px; }
-            button { padding: 8px 14px; font-size: 0.8rem; }
-            .tile { font-size: 1.5rem; }
-            .input-tile { font-size: 1.3rem; }
-            .timer { font-size: 1.5rem; }
-            .game-result-modal { padding: 30px 20px; }
+            .game-result-modal { padding: 24px 16px; }
             .result-title { font-size: 1.8rem; }
+        }
+        @media (max-width: 360px) {
+            .game-result-modal { padding: 20px 14px; }
+            .result-title { font-size: 1.5rem; }
         }
     </style>
 
@@ -726,8 +740,8 @@
 }
 
 .char-slot img {
-    /* height matches the title text block (~80px) */
-    height: clamp(94px, 12.5vw, 140px);
+    /* height matches the title text block — scales smoothly on all screens */
+    height: clamp(48px, 13vw, 140px);
     width: auto;
     image-rendering: pixelated;
     image-rendering: crisp-edges;
@@ -743,41 +757,23 @@
     text-align: center;
 }
 
-/* ── Tablet ── */
-@media (max-width: 768px) {
-    .char-slot img {
-        height: clamp(78px, 10.94vw, 109px);
-    }
-    .title-row { gap: 8px; }
-}
+/* ── title-row gap shrinks on smaller screens (char-slot height is already fluid) ── */
+@media (max-width: 768px) { .title-row { gap: 8px; } }
+@media (max-width: 480px) { .title-row { gap: 6px; } }
+@media (max-width: 360px) { .title-row { gap: 4px; } }
 
-/* ── Mobile ── */
-@media (max-width: 480px) {
-    .char-slot img {
-        height: clamp(59px, 14.06vw, 84px);
-    }
+/* Keyboard sizing is handled by clamp() on .key / .keyboard */
+
+/* ── Landscape mobile / short viewport ── */
+@media (max-height: 560px) {
+    .header { margin-bottom: 8px; }
     .title-row { gap: 6px; }
-}
-
-/* ── Very small ── */
-@media (max-width: 360px) {
-    .char-slot img { height: 52px; }
-    .title-row { gap: 4px; }
-}
-
-/* ── Keyboard responsive ── */
-@media (max-width: 600px) {
-    .key { height: 46px; font-size: 0.85rem; }
-    .key.wide { font-size: 0.65rem; }
-}
-@media (max-width: 480px) {
-    .keyboard { max-width: 100%; }
-    .keyboard-row { gap: 4px; }
-    .key { height: 42px; font-size: 0.8rem; }
-}
-@media (max-width: 360px) {
-    .key { height: 38px; font-size: 0.72rem; }
-    .key.wide { font-size: 0.55rem; }
+    .char-slot img { height: clamp(40px, 6vh, 70px); }
+    .controls { margin-bottom: 8px; }
+    .timer { margin-bottom: 8px; font-size: 1.2rem; }
+    .game-board { margin-bottom: 10px; padding: 8px; }
+    .keyboard { margin-top: 8px; }
+    .key { height: clamp(32px, 6.5vh, 44px); }
 }
 </style>
 </head>
@@ -815,7 +811,7 @@
                 <span id="charCount">0/5</span>
             </div>
             <div class="input-boxes" id="inputBoxes"></div>
-            <input type="text" id="hiddenInput" style="position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none;">
+            <input type="text" id="hiddenInput" autocomplete="off" autocapitalize="characters" inputmode="none" style="position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none; font-size: 16px;">
             <div class="info-text">Press ENTER to submit • BACKSPACE to delete</div>
         </div>
 
