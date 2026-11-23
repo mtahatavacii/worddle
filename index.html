@@ -950,7 +950,7 @@
             if (!s || typeof s !== 'object') return null;
             // migrate old plaintext format
             const word = s.w ? decodeWord(s.w) : s.secret_word;
-            if (!word || !/^[A-Z]{5}$/.test(word)) return null;
+            if (!word || !/^[A-Z]{5}$/.test(word) || !ALLOWED.has(word)) return null;
             const guesses = Array.isArray(s.guesses) ? s.guesses.filter(g => /^[A-Z]{5}$/.test(g)).slice(0, MAX_ATTEMPTS) : [];
             return {
                 secret_word: word,
