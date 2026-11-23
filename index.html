@@ -1042,18 +1042,24 @@ button:focus-visible, .switch:focus-visible { outline: 2px solid #00ffff; outlin
         let revealing = false;
 
         // ── Storage helpers ─────────────────────────────
+        // localStorage can throw on access (iOS with cookies blocked, some private modes,
+        // sandboxed webviews). Fall back to memory so the game still works for this visit.
+        const memStore = {};
+        const store = {
+            get(k) { try { return window.localStorage.getItem(k); } catch (e) { return k in memStore ? memStore[k] : null; } },
+            set(k, v) { try { window.localStorage.setItem(k, v); } catch (e) { memStore[k] = String(v); } },
+            remove(k) { try { window.localStorage.removeItem(k); } catch (e) { /* ignore */ } delete memStore[k]; }
+        };
         function readJSON(key, fallback) {
             try {
-                const v = JSON.parse(localStorage.getItem(key));
+                const v = JSON.parse(store.get(key));
                 return v ?? fallback;
             } catch (e) {
-                localStorage.removeItem(key);
+                store.remove(key);
                 return fallback;
             }
         }
-        function writeJSON(key, value) {
-            try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { /* storage full / disabled */ }
-        }
+        function writeJSON(key, value) { store.set(key, JSON.stringify(value)); }
         const encodeWord = w => btoa(w.split('').reverse().join(''));
         const decodeWord = s => { try { return atob(s).split('').reverse().join(''); } catch (e) { return null; } };
 
@@ -1085,7 +1091,7 @@ button:focus-visible, .switch:focus-visible { outline: 2px solid #00ffff; outlin
             const { secret_word, ...rest } = state;
             writeJSON(STATE_KEY, { ...rest, w: encodeWord(secret_word) });
         }
-        function deleteState() { localStorage.removeItem(STATE_KEY); }
+        function deleteState() { store.remove(STATE_KEY); }
 
         function loadStats() {
             const saved = readJSON(STATS_KEY, {});
@@ -1123,12 +1129,17 @@ button:focus-visible, .switch:focus-visible { outline: 2px solid #00ffff; outlin
         }
 
         // ── Init ────────────────────────────────────────
+        function safeRun(name, fn) {
+            try { fn(); } catch (e) { console.error(name + ' failed:', e); }
+        }
         window.addEventListener('DOMContentLoaded', () => {
-            loadSettings();
-            loadStats();
-            renderKeyboard();
-            initializeGame();
-            setupEventListeners();
+            safeRun('keyboard', renderKeyboard);            // first: never depends on storage
+            safeRun('settings', loadSettings);
+            if (!settings) settings = { keyboardOnly: false };
+            safeRun('stats', loadStats);
+            if (!stats) stats = getInitialStats();
+            safeRun('game', initializeGame);
+            safeRun('events', setupEventListeners);
         });
 
         function initializeGame() {
