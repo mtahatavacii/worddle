@@ -6,6 +6,7 @@
     <title>WORDLE - by mtahatavaci</title>
     <meta name="description" content="Neon Wordle — guess the 5-letter word in 6 tries.">
     <meta name="theme-color" content="#0a0e27">
+    <meta name="color-scheme" content="dark">
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 100 100%27%3E%3Crect width=%27100%27 height=%27100%27 rx=%2720%27 fill=%27%2300ff41%27/%3E%3Ctext x=%2750%27 y=%2772%27 font-size=%2765%27 text-anchor=%27middle%27 font-family=%27Arial%27 font-weight=%27bold%27%3EW%3C/text%3E%3C/svg%3E">
     <link rel="preload" as="image" href="img/char-left.webp">
     <link rel="preload" as="image" href="img/char-right.webp">
@@ -908,6 +909,10 @@ button:focus-visible, .switch:focus-visible { outline: 2px solid #00ffff; outlin
 /* stats overview rows were laid out side by side (flex row) */
 .stats-content.active { display: block; }
 .stats-content { max-height: min(62dvh, 520px); }
+
+/* solid dark fallback: if the body gradient is not painted (seen on iPhone Chrome) the page must not fall back to white */
+html { background-color: #0a0e27; color-scheme: dark; }
+body { background-color: #0a0e27; }
 </style>
 </head>
 <body>
