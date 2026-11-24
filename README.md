@@ -6,7 +6,7 @@ Neon Wordle clone in a single static `index.html`. Live: https://worddle-three.v
 
 End-to-end tests use [Playwright](https://playwright.dev) and live in `tests/`.
 They run on every push and pull request (GitHub Actions, Chromium + WebKit).
-The latest report from `main` is published with GitHub Pages at `/report/` (e.g. https://mtahatavacii.github.io/worddle/report/).
+The latest report from `main` is published at https://mtahatavacii.github.io/worddle/report/ (GitHub Pages hosts only the report; the game is on Vercel).
 
 ```bash
 cd tests

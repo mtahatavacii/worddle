@@ -35,13 +35,12 @@ jobs:
       - name: Run tests (Chromium + WebKit)
         run: npx playwright test
 
-      # GitHub Pages site = the game at / and the latest test report at /report/
+      # GitHub Pages only hosts the latest test report (/report/); the game itself is on Vercel
       - name: Build Pages site
         if: ${{ !cancelled() && github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
         working-directory: .
         run: |
           mkdir -p _site
-          cp -r index.html img _site/
           cp -r tests/playwright-report _site/report
 
       - name: Upload Pages site
