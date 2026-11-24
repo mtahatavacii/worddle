@@ -35,7 +35,7 @@ Production is checked by a k6 browser check in Grafana Cloud Synthetic Monitorin
 | Grafana | https://mtahatavaci.grafana.net (Testing & synthetics → Synthetics → Checks → `mtahatavaci-worddle`) |
 | Type | Browser check (k6 browser, Chromium) |
 | Target | https://worddle-three.vercel.app |
-| Frequency | every 5 minutes, 1 probe (Calgary) ≈ 8,640 executions/month (free tier: 10k browser executions) |
+| Frequency | every hour, 1 probe (Calgary) ≈ 720 executions/month (free tier: 10k browser executions) |
 | Script | [`monitoring/worddle-browser-check.js`](monitoring/worddle-browser-check.js) |
 
 The script fixes the secret word to `CRANE`, then checks that:
@@ -45,4 +45,4 @@ The script fixes the secret word to `CRANE`, then checks that:
 3. the guess `TRACE` is scored `absent, correct, correct, present, correct`
 4. the guess `CRANE` opens the `VICTORY` dialog
 
-All checks must pass (`checks: rate==1.0`). The script uses the game's globals (`state`, `revealing`, `saveState`, `renderBoard`); if those are renamed in `index.html`, update the script and paste it into the check again. Adding a second probe or a shorter interval exceeds the free tier.
+All checks must pass (`checks: rate==1.0`). The script uses the game's globals (`state`, `revealing`, `saveState`, `renderBoard`); if those are renamed in `index.html`, update the script and paste it into the check again. Each probe adds about 720 executions/month at this interval; the free tier allows 10k.
