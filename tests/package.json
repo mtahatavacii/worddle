@@ -1,0 +1,13 @@
+{
+  "name": "worddle-tests",
+  "private": true,
+  "description": "End-to-end tests for Worddle (index.html)",
+  "scripts": {
+    "test": "playwright test",
+    "test:chromium": "playwright test --project=chromium",
+    "report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.65.1"
+  }
+}
