@@ -35,10 +35,36 @@ jobs:
       - name: Run tests (Chromium + WebKit)
         run: npx playwright test
 
-      - name: Upload report
-        if: failure()
-        uses: actions/upload-artifact@v4
+      # GitHub Pages site = the game at / and the latest test report at /report/
+      - name: Build Pages site
+        if: ${{ !cancelled() && github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
+        working-directory: .
+        run: |
+          mkdir -p _site
+          cp -r index.html img _site/
+          cp -r tests/playwright-report _site/report
+
+      - name: Upload Pages site
+        if: ${{ !cancelled() && github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
+        uses: actions/upload-pages-artifact@v3
         with:
-          name: playwright-report
-          path: tests/playwright-report
-          retention-days: 7
+          path: _site
+
+  deploy-pages:
+    needs: playwright
+    # publish the report even when tests fail, so the failure can be read
+    if: ${{ !cancelled() && github.event_name != 'pull_request' && github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}report/
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
