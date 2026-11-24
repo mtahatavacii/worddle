@@ -1,3 +1,4 @@
 # Only the game is deployed; tests and CI config stay out of the site.
 tests
 .github
+monitoring

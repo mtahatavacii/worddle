@@ -25,3 +25,24 @@ Use an installed Chrome instead of the bundled one: `CHROME_PATH=/path/to/chrome
 | `settings-a11y.spec.js` | Onscreen Keyboard Only, aria labels, live region, focus, reduced motion |
 | `storage.spec.js` | corrupt/old/blocked localStorage, dark background fallback (also on WebKit) |
 | `mobile.spec.js` | 8 phone/tablet sizes: keyboard on the first screen, full game by tapping (also on WebKit) |
+
+## Synthetic monitoring
+
+Production is checked by a k6 browser check in Grafana Cloud Synthetic Monitoring.
+
+| | |
+| --- | --- |
+| Grafana | https://mtahatavaci.grafana.net (Testing & synthetics → Synthetics → Checks → `mtahatavaci-worddle`) |
+| Type | Browser check (k6 browser, Chromium) |
+| Target | https://worddle-three.vercel.app |
+| Frequency | every 5 minutes, 1 probe (Calgary) ≈ 8,640 executions/month (free tier: 10k browser executions) |
+| Script | [`monitoring/worddle-browser-check.js`](monitoring/worddle-browser-check.js) |
+
+The script fixes the secret word to `CRANE`, then checks that:
+
+1. the page returns HTTP 200
+2. the onscreen keyboard (28 keys) and the board (30 tiles) are rendered, i.e. the JavaScript ran
+3. the guess `TRACE` is scored `absent, correct, correct, present, correct`
+4. the guess `CRANE` opens the `VICTORY` dialog
+
+All checks must pass (`checks: rate==1.0`). The script uses the game's globals (`state`, `revealing`, `saveState`, `renderBoard`); if those are renamed in `index.html`, update the script and paste it into the check again. Adding a second probe or a shorter interval exceeds the free tier.
