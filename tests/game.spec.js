@@ -58,22 +58,32 @@ test.describe('input', () => {
     await expect(toasts(page).first()).toHaveText('Not enough letters');
   });
 
-  test('invalid word stays on the board and Backspace removes one letter', async ({ page }) => {
+  test('invalid word is cleared from the row after the shake', async ({ page }) => {
     await start(page);
     await page.keyboard.type('ZZZZZ');
     await page.keyboard.press('Enter');
     await expect(toasts(page).first()).toHaveText('Not in word list');
-    expect(await rowText(page)).toBe('ZZZZZ');
+    await expect.poll(() => rowText(page)).toBe('');
+    await page.keyboard.type('CRANE');
+    expect(await rowText(page)).toBe('CRANE');
+  });
+
+  test('invalid word is kept if the player edits it during the shake', async ({ page }) => {
+    await start(page);
+    await page.keyboard.type('ZZZZZ');
+    await page.keyboard.press('Enter');
     await page.keyboard.press('Backspace');
+    await page.waitForTimeout(800);
     expect(await rowText(page)).toBe('ZZZZ');
   });
 
-  test('a word cannot be guessed twice', async ({ page }) => {
+  test('a word cannot be guessed twice and the repeat is cleared', async ({ page }) => {
     await start(page);
     await guess(page, 'TRACE');
     await tap(page, 'TRACE');
     await page.click('.key[data-key="ENTER"]');
     await expect(toasts(page).first()).toHaveText('Already guessed');
+    await expect.poll(() => rowText(page, 1)).toBe('');
   });
 
   test('onscreen ENTER then physical keys start a fresh row', async ({ page }) => {

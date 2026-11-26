@@ -1282,8 +1282,8 @@ body { background-color: #0a0e27; }
             if (revealing) return;
             const guess = currentInput.toUpperCase();
             if (guess.length !== WORD_LENGTH) { shakeRow(); showToast('Not enough letters'); return; }
-            if (!isValidWord(guess)) { shakeRow(); showToast('Not in word list'); return; }
-            if (state.guesses.includes(guess)) { shakeRow(); showToast('Already guessed'); return; }
+            if (!isValidWord(guess)) { rejectGuess(guess, 'Not in word list'); return; }
+            if (state.guesses.includes(guess)) { rejectGuess(guess, 'Already guessed'); return; }
 
             const row = state.guesses.length;
             state.guesses.push(guess);
@@ -1484,6 +1484,16 @@ body { background-color: #0a0e27; }
                 void tile.offsetWidth;
                 tile.classList.add('win');
             }
+        }
+
+        // Shake, then clear the row once the shake ends, unless the player already edited it.
+        function rejectGuess(guess, msg) {
+            shakeRow();
+            showToast(msg);
+            const row = state.guesses.length;
+            setTimeout(() => {
+                if (state.guesses.length === row && !state.game_over && currentInput.toUpperCase() === guess) setInput('');
+            }, REDUCED_MOTION ? 0 : 600);
         }
 
         function shakeRow() {
