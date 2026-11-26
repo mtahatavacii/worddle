@@ -1,6 +1,6 @@
 # worddle
 
-Neon Wordle clone in a single static `index.html`. Live: https://worddle-three.vercel.app
+Neon Wordle clone in a single static `index.html`. Live: https://worddle-mtahatavaci.vercel.app
 
 ## Tests
 
@@ -34,7 +34,7 @@ Production is checked by a k6 browser check in Grafana Cloud Synthetic Monitorin
 | --- | --- |
 | Grafana | https://mtahatavaci.grafana.net (Testing & synthetics → Synthetics → Checks → `mtahatavaci-worddle`) |
 | Type | Browser check (k6 browser, Chromium) |
-| Target | https://worddle-three.vercel.app |
+| Target | https://worddle-mtahatavaci.vercel.app |
 | Frequency | every hour, 1 probe (Calgary) ≈ 720 executions/month (free tier: 10k browser executions) |
 | Script | [`monitoring/worddle-browser-check.js`](monitoring/worddle-browser-check.js) |
 

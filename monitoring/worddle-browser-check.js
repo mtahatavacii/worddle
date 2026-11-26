@@ -18,7 +18,7 @@ export const options = {
   },
 };
 
-const URL = 'https://worddle-three.vercel.app';
+const URL = 'https://worddle-mtahatavaci.vercel.app';
 
 export default async function () {
   const page = await browser.newPage();
